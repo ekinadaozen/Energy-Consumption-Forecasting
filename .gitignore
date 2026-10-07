@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Ortam Değişkenleri
+.env
+
+# Model Dosyaları
+models/*.joblib
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,24 @@
+# ============================================================
+# Energy Consumption Forecasting - Python Bağımlılıkları
+# ============================================================
+# Bu dosya projenin çalışması için gerekli tüm kütüphaneleri
+# içerir. Kurulum: pip install -r requirements.txt
+# ============================================================
+
+# --- Veri Bilimi & Makine Öğrenmesi ---
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# --- Veritabanı ---
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+
+# --- API Servisi ---
+fastapi>=0.100.0
+uvicorn>=0.23.0
+pydantic>=2.0.0
+
+# --- Ortam Değişkenleri ---
+python-dotenv>=1.0.0

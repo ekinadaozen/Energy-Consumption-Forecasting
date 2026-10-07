@@ -1,0 +1,42 @@
+# ============================================================
+# Docker Compose - PostgreSQL Veritabanı Servisi
+# ============================================================
+# Bu dosya, projemiz için gerekli olan PostgreSQL veritabanını
+# Docker container olarak ayağa kaldırır.
+#
+# Kullanım:
+#   docker-compose up -d     -> Veritabanını başlat
+#   docker-compose down      -> Veritabanını durdur
+#   docker-compose logs db   -> Logları görüntüle
+# ============================================================
+
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------
+  # PostgreSQL Veritabanı Servisi
+  # ---------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: energy_forecasting_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-energy_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-energy_pass_123}
+      POSTGRES_DB: ${POSTGRES_DB:-energy_forecasting_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Veritabanı verileri kalıcı olsun
+      - pgdata:/var/lib/postgresql/data
+      # Başlangıç SQL script'i otomatik çalışsın
+      - ./init_db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-energy_user}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+    driver: local
