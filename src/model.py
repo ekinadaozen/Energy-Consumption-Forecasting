@@ -169,7 +169,7 @@ def print_feature_importance(model, feature_names):
     print("=" * 50)
 
     for rank, idx in enumerate(sorted_idx, 1):
-        bar = "█" * int(importances[idx] * 40)
+        bar = "#" * int(importances[idx] * 40)
         print(f"  {rank}. {feature_names[idx]:15s} : {importances[idx]:.4f} {bar}")
 
     print("=" * 50)

@@ -54,8 +54,8 @@ def main():
 
     # Gerçek veri akışı istendiyse
     if args.real:
-        from scripts.load_real_data import main as load_real_main
-        load_real_main()
+        from scripts.load_real_data import run_real_data_pipeline
+        run_real_data_pipeline()
         return
 
     # Hiçbir argüman verilmediyse hepsini çalıştır

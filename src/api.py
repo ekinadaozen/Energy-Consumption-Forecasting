@@ -53,6 +53,22 @@ app = FastAPI(
 # modeli diskten tekrar yüklemek yavaş olurdu.
 # Uygulama başladığında bir kez yüklenir.
 model = None
+_model_mtime = None
+
+
+def get_active_model():
+    """
+    Model dosyasının güncellenme zamanını kontrol eder ve
+    yeni bir model eğitilmişse otomatik olarak güncel modeli yükler.
+    """
+    global model, _model_mtime
+    import os
+    if os.path.exists(MODEL_PATH):
+        current_mtime = os.path.getmtime(MODEL_PATH)
+        if model is None or _model_mtime != current_mtime:
+            model = load_model()
+            _model_mtime = current_mtime
+    return model
 
 
 @app.on_event("startup")
@@ -61,14 +77,11 @@ async def startup_event():
     Uygulama başladığında çalışır.
     Eğitilmiş modeli diskten yükler.
     """
-    global model
-    try:
-        model = load_model()
-        print("\n  [OK] API başlatıldı, model yüklendi.")
-    except FileNotFoundError as e:
-        print(f"\n  [UYARI] {e}")
-        print("  API başlatıldı ancak model yüklenmedi.")
-        print("  Önce modeli eğitin: python -m scripts.train_model")
+    get_active_model()
+    if model is not None:
+        print("\n  [OK] API başlatıldı, güncel model başarıyla yüklendi.")
+    else:
+        print("\n  [BİLGİ] Model dosyası bulunamadı. Lütfen önce modeli eğitin.")
 
 
 # ---------------------------------------------------------
@@ -193,7 +206,8 @@ async def predict(request: PredictionRequest):
       4. Sonuç JSON olarak döndürülür
     """
     # Model yüklü mü kontrol et
-    if model is None:
+    active_model = get_active_model()
+    if active_model is None:
         raise HTTPException(
             status_code=503,
             detail=(
@@ -210,7 +224,7 @@ async def predict(request: PredictionRequest):
     ])
 
     # Model ile tahmin yap
-    prediction = model.predict(input_array)[0]
+    prediction = active_model.predict(input_array)[0]
 
     # Negatif tahmin mantıksızdır (enerji >= 0 olmalı)
     prediction = max(0, prediction)
@@ -218,7 +232,7 @@ async def predict(request: PredictionRequest):
     # Yanıt oluştur ve döndür
     return PredictionResponse(
         predicted_energy_kwh=round(prediction, 2),
-        unit="kWh",
+        unit="MWh",
         model_path=MODEL_PATH,
         input_features=input_dict,
     )
