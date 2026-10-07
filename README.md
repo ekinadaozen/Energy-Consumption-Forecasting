@@ -88,6 +88,21 @@ uvicorn src.api:app --reload
 
 > 💡 **Tek komutla hepsini çalıştır:** `python main.py`
 
+### 🌍 Gerçek Veri ile Çalıştırma (EPİAŞ + Open-Meteo)
+
+Projede yapay veri yerine Türkiye'nin gerçek tüketim ve meteoroloji verilerini kullanmak için:
+
+1. **EPİAŞ'tan Tüketim Verisini İndirin:**
+   - [EPİAŞ Şeffaflık Platformu](https://seffaflik.epias.com.tr/transparency/tuketim/gercek-zamanli-tuketim.xhtml) sayfasına gidin.
+   - İstediğiniz tarih aralığını (örn. son 1 yıl) seçip **Excel** veya **CSV** olarak indirin.
+   - İndirdiğiniz dosyayı projedeki `data/` klasörüne kopyalayın (örn. `data/GercekZamanliTuketim.csv`).
+
+2. **Gerçek Verileri Yükleyin ve Modeli Eğitin:**
+   ```bash
+   python main.py --real
+   ```
+   *Bu komut EPİAŞ dosyasını okur, aynı tarihler için **Open-Meteo API** üzerinden gerçek hava durumu verilerini (sıcaklık, nem, rüzgar hızı, bulutluluk) çeker, veritabanını günceller ve modeli baştan eğitir.*
+
 ---
 
 ## 📊 Model Değerlendirme Çıktısı (Örnek)

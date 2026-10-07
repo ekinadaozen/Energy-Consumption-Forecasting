@@ -44,8 +44,19 @@ def main():
         action="store_true",
         help="FastAPI servisini başlat",
     )
+    parser.add_argument(
+        "--real",
+        action="store_true",
+        help="EPİAŞ ve Open-Meteo gerçek verilerini yükle ve modeli eğit",
+    )
 
     args = parser.parse_args()
+
+    # Gerçek veri akışı istendiyse
+    if args.real:
+        from scripts.load_real_data import main as load_real_main
+        load_real_main()
+        return
 
     # Hiçbir argüman verilmediyse hepsini çalıştır
     run_all = not (args.seed or args.train or args.api)
